@@ -3,7 +3,7 @@ Component that generates Survey Invitations on Account, Contact and Leads.
 Useful to generate Survey Invitation URLs and send them to Contacts in the Email body with another tool like Marketing Cloud.
 This component creates only guest invitations.
 
-![screenshot](https://github.com/nfunky/salesforce-survey-invitation-generator/screenshot.png)
+![screenshot](https://github.com/nfunky/salesforce-survey-invitation-generator/blob/main/screenshot.png)
 
 ## Features
 * Create Survey Invitation records for records selected in a list view.
