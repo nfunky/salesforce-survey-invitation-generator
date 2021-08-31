@@ -17,7 +17,11 @@ This component creates only guest invitations.
 
 ## Setup
 1. Ensure the prerequisites mentioned above are fulfilled.
-2. Deploy the metadata components to your environment.
+2. Deploy the metadata components to your environment. 
+<a href="https://githubsfdeploy.herokuapp.com">
+  <img alt="Deploy to Salesforce"
+       src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/deploy.png">
+</a>
 3. In Setup navigate to the **Object Manager** and select the Object where you want to generate the Survey Invitation records (Account, Contact or Lead)
 4. Click the **Search Layouts for Salesforce Classic** option to add the list view button
 5. Click **Edit** next to List View row and add the custom button **Generate Survey Invitations** and click save.
