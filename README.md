@@ -19,6 +19,6 @@ This component creates only guest invitations.
 1. Ensure the prerequisites mentioned above are fulfilled.
 2. Deploy the metadata components to your environment.
 3. In Setup navigate to the **Object Manager** and select the Object where you want to generate the Survey Invitation records (Account, Contact or Lead)
-4. Click the **Search Layouts for Salesforce Classic** Option (for Summer '21 release, but might change in future releases)
+4. Click the **Search Layouts for Salesforce Classic** option to add the list view button
 5. Click **Edit** next to List View row and add the custom button **Generate Survey Invitations** and click save.
 
