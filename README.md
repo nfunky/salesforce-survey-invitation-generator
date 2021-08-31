@@ -8,7 +8,7 @@ This component creates only guest invitations.
        src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/deploy.png">
 </a>
 
-![screenshot](https://github.com/nfunky/salesforce-survey-invitation-generator/blob/main/screenshot.png)
+![screenshot](https://github.com/nfunky/salesforce-survey-invitation-generator/blob/master/screenshot.png)
 
 ## Features
 * Create Survey Invitation records for records selected in a list view.
