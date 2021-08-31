@@ -1,0 +1,201 @@
+<template>
+    <div class="margin-bottom-large">
+        <lightning-card>    
+            <h1 slot="title">
+                <lightning-icon icon-name="standard:survey" size="small"></lightning-icon>
+                <span style="margin:0.5em">Generate Survey Invitations</span>
+            </h1>
+            <div class="slds-notify slds-notify_alert slds-alert_error" role="alert" if:true={isError}>
+                <span class="slds-assistive-text">error</span>
+                <span class="slds-icon_container slds-icon-utility-error slds-m-right_x-small" title="Description of icon when needed">
+                  <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+                    <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#error"></use>
+                  </svg>
+                </span>
+                <h2>{errorMessage}</h2>              
+            </div>
+            <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_info" role="alert" if:true={successMessage}>
+                <span class="slds-assistive-text">info</span>               
+                <h2>{successMessage}</h2>               
+              </div>
+
+            <lightning-spinner alternative-text="Loading" size="large" if:true={isSpinnerVisible}></lightning-spinner>
+            
+            <lightning-tabset>
+                <lightning-tab label="Individual Record Selection" onactive={handleActiveSelection}>
+                    <div class="slds-grid slds-wrap">                        
+                        <div class="slds-col slds-size_7-of-12">
+                            <div class="slds-grid slds-gutters">
+                                <div class="slds-grid slds-grid_vertical" style="margin:0.1em;height:max-content;">
+                                    <div class="slds-col" if:true={isAvailableSurveysLoaded}>
+                                        <div class="slds-p-horizontal_small" style="width:42em;display: flex;flex-flow: row;justify-content: space-between;">
+                                            <lightning-combobox
+                                            class="communitySelect"
+                                                    style="width:20em;"
+                                                    name="community"
+                                                    label="Community"
+                                                    value={selectedCommunity}
+                                                    placeholder="Select Community"
+                                                    options={availableCommunities}
+                                                    required></lightning-combobox>
+                                            <lightning-combobox
+                                            class="surveySelect"
+                                            style="width:20em;"
+                                                    name="survey"
+                                                    label="Survey"
+                                                    value={selectedSurvey}
+                                                    placeholder="Select Survey"
+                                                    options={availableSurveyNames}
+                                                    required></lightning-combobox>
+                                        </div>
+                                    </div>
+                                        <div class="slds-col" style="display:flex;align-items:center;margin:1.5em 0.5em;height:4em">    
+                                            <p style="align-self: flex-end;">Selected records:</p>
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_5-of-12">
+                            <div class="slds-grid slds-gutters">
+                                <div class="slds-grid slds-grid_vertical" style="margin:0.1em;">
+                                    <div class="slds-col" style="width:50%;margin-top:0.5em;">
+                                        <lightning-combobox
+                                        class="object"
+                                        name="object"
+                                        label="Object"
+                                        value="Account"
+                                        placeholder="Select SObject"
+                                        onchange={handleQueryObjectChange}
+                                        options={objectOptions}
+                                        ></lightning-combobox>                                        
+                                    </div>
+                                    <div class="slds-col" style="display:flex;align-items:stretch;margin-top:0.5em;">
+                                            <lightning-combobox
+                                                class="field"
+                                                name="field"
+                                                label="Field"
+                                                value=""
+                                                placeholder="Select Field"
+                                                options={fieldsForSelection}
+                                                ></lightning-combobox>
+                                            <lightning-combobox
+                                                class="operator"
+                                                name="operator"
+                                                label="Operator"
+                                                value="equals"
+                                                options={operatorOptions}></lightning-combobox>
+                                            <lightning-input 
+                                                class="fieldvalue"
+                                                type="text" 
+                                                name="filtervalue" 
+                                                label="Filter value" 
+                                                placeholder="Enter a filter value">
+                                            </lightning-input>
+                                            <lightning-button 
+                                                variant="neutral" 
+                                                label="Search" 
+                                                onclick={submitFilterQuery} 
+                                                style="align-self: flex-end;"></lightning-button>                                            
+                                    </div>
+                                    <div class="slds-col" if:true={numberOfResults} style="display:flex;flex-direction:row;justify-content: flex-end">
+                                        <p>Displaying {numberOfResults} of {maxRecordCountForQuery} records.</p>
+                                    </div>                                         
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_6-of-12">
+                            <div style="min-height:40vh;max-height:50vh;margin:1em;">
+                                <lightning-datatable
+                                key-field="id"
+                                data={recordSelectionList}
+                                selected-rows={selectedRows}
+                                columns={columns}
+                                show-row-number-column="true">
+                                </lightning-datatable>
+                                <div class="slds-illustration slds-illustration_small" if:true={isSelectionEmpty} style="margin-top:6vh;">
+                                    <div class="slds-text-longform">
+                                      <h3 class="slds-text-heading_medium">No records selected</h3>
+                                      <p class="slds-text-body_regular">Add records to the selection by entering a SOQL query and selecting them.</p>
+                                    </div>
+                                </div>
+                            </div>                                
+                        </div>
+                        <div class="slds-col slds-size_6-of-12">
+                            <div class="slds-grid slds-gutters">
+                                <div class="slds-col slds-size_2-of-12" >          
+                                    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;">    
+                                        <lightning-button variant="neutral" label="<<" onclick={addQueryRecordsToSelection} style="margin:0.5em;"></lightning-button>
+                                        <lightning-button variant="neutral" label=">>" onclick={removeSelectedRecordsFromSelection}></lightning-button>
+                                    </div>   
+                                </div>
+                                <div class="slds-col slds-size_10-of-12">                            
+                                    <div style="height:50vh;margin:1em;" class="slds-wrap">
+                                        <lightning-datatable
+                                        key-field="id"
+                                        data={queryResults}
+                                        selected-rows={selectedQueryRows}
+                                        columns={columns}
+                                        enable-infinite-loading
+                                        onloadmore={loadMoreRecords}
+                                        show-row-number-column="true">
+                                        </lightning-datatable>
+                                        <div if:true={isQuerySpinnerVisible} class="slds-spinner_inline spinner-padding">
+                                            <lightning-spinner variant="brand" 
+                                                               alternative-text="Loading Records"     
+                                                               size="medium">
+                                            </lightning-spinner>
+                                        </div>    
+                                    </div>                                                                 
+                                </div>
+                            </div>
+                        </div>
+                    </div>           
+                </lightning-tab>
+                <lightning-tab label="Apex Job" title="Apex Job" onactive={handleActiveApexJob}>
+                    <div class="slds-grid slds-wrap">                
+                        <div class="slds-col slds-size_12-of-12" style="align-items:center;justify-content:center;">
+                            <p class="slds-p-horizontal_small" if:true={isAvailableSurveysLoaded}>
+                            <lightning-combobox
+                            class="job-communitySelect"
+                                    style="width:20em;"
+                                    name="community"
+                                    label="Community"
+                                    value={selectedCommunity}
+                                    placeholder="Select Community"
+                                    options={availableCommunities}
+                                    required></lightning-combobox>
+                            </p>
+                        </div>
+                        <div class="slds-col slds-size_12-of-12" style="align-items:center;justify-content:center;">
+                            <p class="slds-p-horizontal_small" if:true={isAvailableSurveysLoaded}>
+                                <lightning-combobox
+                                class="job-surveySelect"
+                                        name="survey"
+                                        style="width:20em;"
+                                        label="Survey"
+                                        value={selectedSurvey}
+                                        placeholder="Select Survey"
+                                        options={availableSurveyNames}
+                                        required></lightning-combobox>
+                            </p>     
+                        </div>   
+                        <div class="slds-col slds-size_12-of-12" style="align-items:center;justify-content:center;">
+                            <p class="slds-p-horizontal_small" if:true={isAvailableSurveysLoaded} >
+                                <lightning-input class='selectionquery' type="text" name="selectionquery" label="Selection Query" placeholder="Enter a selection query for the records you want to create Survey Invitations for" minlength="15" required></lightning-input>
+                            </p>
+                        </div>
+                    </div>
+                </lightning-tab>              
+            </lightning-tabset>
+            
+           
+            <div slot="footer">
+               <div if:true={isAvailableSurveysLoaded}  class="slds-align_absolute-center">
+                    <lightning-button variant="neutral" label="Cancel" onclick={cancel}></lightning-button>
+                    <lightning-button variant="brand" label={buttonLabel} onclick={handleClickConfirmButton} class="slds-m-left_x-small"></lightning-button>    
+                </div>  
+            </div>
+            
+        </lightning-card>
+    </div>
+</template>

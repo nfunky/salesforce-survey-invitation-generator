@@ -1,0 +1,14 @@
+<apex:page standardController="Account" recordSetVar="recordIds" extensions="SurveyGeneratorVFExtension">
+    <apex:includeLightning />    
+    <div id="lwc" />    
+    <script>
+    $Lightning.use("c:GenerateSurveyInvitationsApp", function() {
+        $Lightning.createComponent("c:generateSurveyInvitations",
+          { 
+              "recordIds":'{!selectedIds}'
+          },
+          "lwc",
+          function(cmp) {});
+    });
+    </script>
+</apex:page>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+        <members>generateSurveyInvitations</members>
+        <name>LightningComponentBundle</name>
+    </types>
+	<types>
+        <members>GenerateSurveyInvitationsApp</members>
+        <name>AuraDefinitionBundle</name>
+    </types>
+	<types>
+        <members>SurveyInvitationGeneratorAccount</members>
+        <members>SurveyInvitationGeneratorContact</members>
+        <members>SurveyInvitationGeneratorLead</members>
+        <name>ApexPage</name>
+    </types>
+	<types>
+        <members>SurveyGenerator</members>
+        <members>SurveyGeneratorTest</members>
+        <members>SurveyGeneratorVFExtension</members>
+        <name>ApexClass</name>
+    </types>
+	<types>
+        <members>Account.Account_GenerateSurveyInvitations</members>
+        <members>Contact.Contact_GenerateSurveyInvitations</members>
+        <members>Lead.Lead_GenerateSurveyInvitations</members>
+        <name>WebLink</name>
+    </types>
+    <version>52.0</version>
+</Package>
